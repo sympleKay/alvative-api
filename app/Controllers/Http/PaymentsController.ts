@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import { createHmac } from 'crypto'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Env from '@ioc:Adonis/Core/Env'
 import BadRequestException from 'App/Exceptions/BadRequestException'
@@ -82,8 +82,7 @@ export default class PaymentsController {
 
   public async webhookEvent({ request, response }: HttpContextContract) {
     try {
-      const hash = crypto
-        .createHmac('sha512', Env.get('PAYSTACK_SECRET_KEY'))
+      const hash = createHmac('sha512', Env.get('PAYSTACK_SECRET_KEY'))
         .update(JSON.stringify(request.body()))
         .digest('hex')
       if (hash !== request.headers['x-paystack-signature']) {
